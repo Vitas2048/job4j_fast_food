@@ -4,27 +4,20 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import javax.persistence.*;
-import java.util.List;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
-@Data
 @AllArgsConstructor
+@Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
-public class Order {
-
+public class Status {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
     private int id;
 
-    private List<Dish> order;
-
-    private int totalSum;
-
-    @ManyToOne
-    private Status status;
-
-    @ManyToOne
-    private Customer customer;
+    private String name;
 }
