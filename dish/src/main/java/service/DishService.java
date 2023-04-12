@@ -12,4 +12,6 @@ public interface DishService {
 
     void renameDish(Dish dish, String newName);
 
+    Dish findById(int id);
+
 }
