@@ -1,23 +1,26 @@
-package model;
+package kitchen.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import model.Kitchen;
 
 import javax.persistence.*;
 
-@AllArgsConstructor
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@AllArgsConstructor
 @Entity
-@NoArgsConstructor
-@Table(name = "status")
-public class Status {
+public class Dish {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
     private int id;
 
     private String name;
+
+    private int price;
+
+    @ManyToOne
+    private Kitchen kitchen;
 }

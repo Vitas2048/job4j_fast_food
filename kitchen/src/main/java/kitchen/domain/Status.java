@@ -1,4 +1,4 @@
-package model;
+package kitchen.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

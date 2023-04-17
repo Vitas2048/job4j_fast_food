@@ -1,24 +1,23 @@
-package model;
+package kitchen.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 
 @Data
 @AllArgsConstructor
-@Entity
-@NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@Table(name = "card")
-public class Card {
+@Entity
+public class Customer {
+
     @Id
     @EqualsAndHashCode.Include
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    private int bonus;
+    private String login;
 
+    private String password;
 }

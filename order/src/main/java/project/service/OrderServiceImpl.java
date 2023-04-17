@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import model.Dish;
 import model.Order;
 import model.OrderDTO;
-import model.Status;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import project.repository.OrderRepository;
@@ -19,16 +19,14 @@ public class OrderServiceImpl implements OrderService {
 
     private RestTemplate restTemplate;
 
+    private KafkaTemplate<String, Object> kafkaTemplate;
+
     private OrderRepository orderRepository;
 
     @Override
     public void createOrder(Order order) {
-        orderRepository.save(order);
-    }
-
-    @Override
-    public Status checkStatus(int orderId) {
-        return orderRepository.findById(orderId).get().getStatus();
+       var save = orderRepository.save(order);
+       kafkaTemplate.send("job4j_orders", order);
     }
 
     @Override
@@ -39,12 +37,10 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderDTO getOrderDTO(int id) {
         var order = orderRepository.findById(id).get();
-        var dishes = order.getOrder().stream().map(
+        var dishes = order.getDishes().stream().map(
                 p -> Objects.requireNonNull(restTemplate.getForEntity(
-                        "/order/findById?id={id}", Dish.class, p.getId()
+                        "/dish/findById?id={id}", Dish.class, p.getId()
                 ).getBody()).getName()).toList();
         return new OrderDTO(order.getId(), dishes, order.getTotalSum(), order.getStatus().getName());
     }
-
-
 }

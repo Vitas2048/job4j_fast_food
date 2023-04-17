@@ -23,9 +23,9 @@
         <module>order</module>
         <module>dish</module>
         <module>delivery</module>
-        <module>kitchen</module>
         <module>payment</module>
         <module>notification</module>
+        <module>kitchen</module>
         <module>domain</module>
 
     </modules>

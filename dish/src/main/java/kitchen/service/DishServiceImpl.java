@@ -1,7 +1,6 @@
-package service;
+package kitchen.service;
 
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import model.Dish;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -16,7 +15,7 @@ public class DishServiceImpl implements DishService {
 
     private final RestTemplate restTemplate;
 
-    @Value("/order/")
+    @Value("/dish/")
     private String url;
 
     private DishRepository dishRepository;

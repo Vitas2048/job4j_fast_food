@@ -2,31 +2,43 @@ package project.controller;
 
 import lombok.AllArgsConstructor;
 import model.Card;
-import model.Dish;
 import model.Order;
-import model.OrderDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 import project.service.CardServiceImpl;
 import project.service.OrderServiceImpl;
+import project.service.StatusService;
+import project.service.StatusServiceImpl;
 
 import java.util.HashMap;
-import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/order")
+@RequestMapping("/orders")
 @AllArgsConstructor
 public class OrderController {
 
-    private final CardServiceImpl cardService;
+    private CardServiceImpl cardService;
 
     private OrderServiceImpl orderService;
 
-    @GetMapping("buy-card")
-    public ResponseEntity getAllOrders() {
+    private StatusServiceImpl statusService;
+
+    @GetMapping("/get")
+    public ResponseEntity hello() {
+        var body = new HashMap<>() {{
+            put("Hello", "World");
+        }}.toString();
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .contentType(MediaType.TEXT_PLAIN)
+                .contentLength(body.length())
+                .body(body);
+    }
+
+    @PostMapping("/buy-card")
+    public ResponseEntity buyCard() {
         cardService.buyCard(new Card());
         var body = new HashMap<>() {{
             put("new discount card", "created");
@@ -51,7 +63,7 @@ public class OrderController {
                 .body(body);
     }
 
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public ResponseEntity getOrderDetails(@PathVariable int id) {
         var orderDto = orderService.getOrderDTO(id);
         var body = orderDto.toString();
@@ -62,9 +74,9 @@ public class OrderController {
                 .body(body);
     }
 
-    @GetMapping("{id}/get-status")
+    @GetMapping("/{id}/get-status")
     public ResponseEntity getStatus(@PathVariable int id) {
-        var status = orderService.checkStatus(id).getName();
+        var status = statusService.checkStatus(id).getName();
         var body = new HashMap<>() {{
             put("Status", status);
         }}.toString();

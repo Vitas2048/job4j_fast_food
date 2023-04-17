@@ -1,7 +1,7 @@
-package model;
+package kitchen.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import model.*;
 
 import javax.persistence.*;
 import java.util.List;
@@ -11,7 +11,6 @@ import java.util.List;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @NoArgsConstructor
-@ToString
 @Table(name = "ff_order")
 public class Order {
 
@@ -21,7 +20,7 @@ public class Order {
     private int id;
 
     @ManyToMany
-    private List<Dish> dishes;
+    private List<Dish> order;
 
     private int totalSum;
 
