@@ -2,8 +2,12 @@ package project.service;
 
 import model.*;
 
+import java.util.List;
+
 public interface StatusService {
 
-    Status checkStatus(int id);
+    Status getStatusById(int id);
+
+    List<Status> getAllStatuses();
 
 }

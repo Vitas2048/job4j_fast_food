@@ -1,4 +1,4 @@
-package project.repository;
+package kitchen.repository;
 
 import model.Order;
 import org.springframework.data.jpa.repository.Query;

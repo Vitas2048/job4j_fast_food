@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import project.service.CardServiceImpl;
 import project.service.OrderServiceImpl;
-import project.service.StatusService;
 import project.service.StatusServiceImpl;
 
 import java.util.HashMap;
@@ -52,9 +51,10 @@ public class OrderController {
 
     @PostMapping("/create-order")
     public ResponseEntity createNewOrder(@RequestBody Order order) {
-        orderService.createOrder(order);
+        order.setStatus(statusService.getStatusById(1));
+        var id = orderService.createOrder(order).getId();
         var body = new HashMap<>() {{
-            put("new order", "created");
+            put("new order id", id);
         }}.toString();
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -67,16 +67,12 @@ public class OrderController {
     public ResponseEntity getOrderDetails(@PathVariable int id) {
         var orderDto = orderService.getOrderDTO(id);
         var body = orderDto.toString();
-        return ResponseEntity
-                .status(HttpStatus.FOUND)
-                .contentType(MediaType.TEXT_PLAIN)
-                .contentLength(body.length())
-                .body(body);
+        return new ResponseEntity<>(orderService.findById(id).get(), HttpStatus.FOUND);
     }
 
     @GetMapping("/{id}/get-status")
     public ResponseEntity getStatus(@PathVariable int id) {
-        var status = statusService.checkStatus(id).getName();
+        var status = statusService.getStatusById(id).getName();
         var body = new HashMap<>() {{
             put("Status", status);
         }}.toString();

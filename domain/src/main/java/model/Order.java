@@ -20,9 +20,6 @@ public class Order {
     @EqualsAndHashCode.Include
     private int id;
 
-    @ManyToMany
-    private List<Dish> dishes;
-
     private int totalSum;
 
     @ManyToOne

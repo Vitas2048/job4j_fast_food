@@ -2,32 +2,45 @@ package project.service;
 
 
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import model.Dish;
 import model.Order;
 import model.OrderDTO;
+import model.Topics;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import project.repository.OrderRepository;
+import project.repository.StatusRepository;
 
+import java.util.LinkedList;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Queue;
 
 @Service
+@Slf4j
 @AllArgsConstructor
 public class OrderServiceImpl implements OrderService {
 
-    private RestTemplate restTemplate;
+    private final Queue<Order> preorders = new LinkedList<>();
 
     private KafkaTemplate<String, Object> kafkaTemplate;
 
     private OrderRepository orderRepository;
 
+
     @Override
-    public void createOrder(Order order) {
+    public Order createOrder(Order order) {
        var save = orderRepository.save(order);
+       preorders.offer(save);
        kafkaTemplate.send("job4j_orders", order);
+       return save;
     }
+
+
 
     @Override
     public Optional<Order> findById(int id) {
@@ -37,10 +50,24 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderDTO getOrderDTO(int id) {
         var order = orderRepository.findById(id).get();
-        var dishes = order.getDishes().stream().map(
-                p -> Objects.requireNonNull(restTemplate.getForEntity(
-                        "/dish/findById?id={id}", Dish.class, p.getId()
-                ).getBody()).getName()).toList();
-        return new OrderDTO(order.getId(), dishes, order.getTotalSum(), order.getStatus().getName());
+        return new OrderDTO(order.getId(), order.getTotalSum(), order.getStatus().getName());
+    }
+
+    @KafkaListener(topics = Topics.TOPIC_COMPLETED)
+    @Override
+    public void getCompletedFromKitchen(Order order) {
+        logAndSave(order, 3);
+    }
+
+    @KafkaListener(topics = Topics.TOPIC_DENIED)
+    @Override
+    public void getDeniedFromKitchen(Order order) {
+        logAndSave(order, 4);
+    }
+
+    private void logAndSave(Order order, int status) {
+        log.debug(String.format("Oder id = %s, status = %s",
+                order.getId(), order.getStatus().getName()));
+        orderRepository.save(order);
     }
 }

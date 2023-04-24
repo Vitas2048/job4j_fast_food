@@ -1,4 +1,4 @@
-package project.repository;
+package kitchen.repository;
 
 import model.Status;
 import org.springframework.data.repository.CrudRepository;

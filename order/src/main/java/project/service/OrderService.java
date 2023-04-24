@@ -6,10 +6,14 @@ import java.util.Optional;
 
 public interface OrderService {
 
-    void createOrder(Order order);
+    Order createOrder(Order order);
 
     Optional<Order> findById(int id);
 
     OrderDTO getOrderDTO(int id);
+
+    void getCompletedFromKitchen(Order order);
+
+    void getDeniedFromKitchen(Order order);
 
 }

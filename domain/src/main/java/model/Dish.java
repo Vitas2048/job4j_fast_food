@@ -10,7 +10,7 @@ import javax.persistence.*;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @AllArgsConstructor
 @Entity
-@Table
+@Table(name = "dishes")
 public class Dish {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,7 +20,4 @@ public class Dish {
     private String name;
 
     private int price;
-
-    @ManyToOne
-    private Kitchen kitchen;
 }

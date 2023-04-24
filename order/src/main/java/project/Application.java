@@ -17,11 +17,6 @@ import project.controller.OrderController;
 @ComponentScan(basePackageClasses = OrderController.class)
 public class Application {
 
-    @Bean
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
-    }
-
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
