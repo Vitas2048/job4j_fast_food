@@ -1,6 +1,8 @@
-package kitchen.service;
+package dish.service;
 
 import model.Dish;
+
+import java.util.List;
 
 public interface DishService {
 
@@ -13,5 +15,7 @@ public interface DishService {
     void renameDish(Dish dish, String newName);
 
     Dish findById(int id);
+
+    List<Dish> findAll();
 
 }

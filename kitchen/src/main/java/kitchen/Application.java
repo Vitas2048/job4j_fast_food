@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @EntityScan("model")
-@EnableJpaRepositories("kitchen.repository")
+@EnableJpaRepositories("dish.repository")
 @SpringBootApplication
 public class Application {
 
