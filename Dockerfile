@@ -1,11 +1,15 @@
-FROM maven:3.6.3-openjdk-17
+FROM maven:3.6.3-openjdk-17 as maven
 
-WORKDIR dish_app
+WORKDIR /dish_app
 
-COPY . .
+COPY . /dish_app
 
-RUN mvn package -Dmaven.test.skip=true
+RUN mvn install
 
-CMD ["mvn", "liquibase:update", "-Pdocker"]
+FROM openjdk:17.0.2-jdk
 
-CMD ["java", "-jar", "dish/target/dish-1.0-SNAPSHOT.jar"]
+WORKDIR /dish_app
+
+COPY --from=maven /dish_app/dish/target/dish-1.0-SNAPSHOT.jar dish_app.jar
+
+CMD ["java", "-jar", "dish_app.jar"]
