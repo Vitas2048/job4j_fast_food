@@ -1,7 +1,7 @@
 package project.service;
 
 import lombok.AllArgsConstructor;
-import model.Status;
+import model.*;
 import org.springframework.stereotype.Service;
 import project.repository.StatusRepository;
 

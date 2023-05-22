@@ -1,21 +1,23 @@
 package project.controller;
 
 import lombok.AllArgsConstructor;
-import model.Card;
-import model.Order;
+import lombok.extern.slf4j.Slf4j;
+import model.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import project.service.CardServiceImpl;
-import project.service.OrderServiceImpl;
-import project.service.StatusServiceImpl;
+import project.message.account.CustomerDTO;
+import project.message.order.DishesRequest;
+import project.service.*;
 
 import java.util.HashMap;
+import java.util.List;
 
 @RestController
-@RequestMapping("/orders")
+@RequestMapping("/api/order")
 @AllArgsConstructor
+@Slf4j
 public class OrderController {
 
     private CardServiceImpl cardService;
@@ -24,21 +26,21 @@ public class OrderController {
 
     private StatusServiceImpl statusService;
 
-    @GetMapping("/get")
-    public ResponseEntity hello() {
-        var body = new HashMap<>() {{
-            put("Hello", "World");
-        }}.toString();
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .contentType(MediaType.TEXT_PLAIN)
-                .contentLength(body.length())
-                .body(body);
+    private DishService dishService;
+
+    private CustomerService customerService;
+
+    @GetMapping("checkout")
+    public ResponseEntity<CustomerDTO> check() {
+        var body = customerService.get();
+        return ResponseEntity.ok(new CustomerDTO(body));
     }
 
     @PostMapping("/buy-card")
     public ResponseEntity buyCard() {
-        cardService.buyCard(new Card());
+        var card = new Card();
+        card.setBonus(10);
+        cardService.buyCard(card, customerService.get());
         var body = new HashMap<>() {{
             put("new discount card", "created");
         }}.toString();
@@ -50,36 +52,36 @@ public class OrderController {
     }
 
     @PostMapping("/create-order")
-    public ResponseEntity createNewOrder(@RequestBody Order order) {
-        order.setStatus(statusService.getStatusById(1));
-        var id = orderService.createOrder(order).getId();
-        var body = new HashMap<>() {{
-            put("new order id", id);
-        }}.toString();
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .contentType(MediaType.TEXT_PLAIN)
-                .contentLength(body.length())
-                .body(body);
+    public ResponseEntity<OrderDTO> createNewOrder(@RequestBody DishesRequest dishesRequest) {
+
+        var dishes = dishesRequest.getDishIds().stream().map(p -> dishService.findById(p)).toList();
+        var sum = dishService.countTotal(dishes);
+        var customer = customerService.get();
+
+        var order = new Order();
+        order.setDishes(dishes);
+        order.setTotalSum(sum);
+        order.setCustomer(customer);
+        order.setStatus(statusService.getStatusById(Topics.STATUS_CREATED));
+
+        customer.getOrders().add(order);
+        orderService.createOrder(order);
+
+        return ResponseEntity.ok(new OrderDTO(order));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity getOrderDetails(@PathVariable int id) {
-        var orderDto = orderService.getOrderDTO(id);
-        var body = orderDto.toString();
-        return new ResponseEntity<>(orderService.findById(id).get(), HttpStatus.FOUND);
+    public ResponseEntity<OrderDTO> getOrderDetails(@PathVariable int id) {
+        var body = orderService.getOrderDTO(id);
+        if (body.getCustomerId() == customerService.get().getId()) {
+            return ResponseEntity.ok(body);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
-    @GetMapping("/{id}/get-status")
-    public ResponseEntity getStatus(@PathVariable int id) {
-        var status = statusService.getStatusById(id).getName();
-        var body = new HashMap<>() {{
-            put("Status", status);
-        }}.toString();
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .contentType(MediaType.TEXT_PLAIN)
-                .contentLength(body.length())
-                .body(body);
+    @GetMapping("get-dishes")
+    public ResponseEntity<List<Dish>> getAllDishes() {
+        var dishes = dishService.getAllDishes();
+        return ResponseEntity.ok(dishes);
     }
 }

@@ -1,6 +1,6 @@
 package kitchen.service;
 
-import model.Status;
+import model.*;
 
 import java.util.List;
 

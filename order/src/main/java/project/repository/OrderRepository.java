@@ -1,10 +1,8 @@
 package project.repository;
 
-import model.Order;
-import org.springframework.data.jpa.repository.Query;
+import model.*;
 import org.springframework.data.repository.CrudRepository;
 
-import java.util.LinkedList;
 
 public interface OrderRepository extends CrudRepository<Order, Integer> {
 }

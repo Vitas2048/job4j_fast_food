@@ -12,8 +12,4 @@ public interface OrderService {
 
     OrderDTO getOrderDTO(int id);
 
-    void getCompletedFromKitchen(Order order);
-
-    void getDeniedFromKitchen(Order order);
-
 }

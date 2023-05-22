@@ -1,12 +1,11 @@
 package dish.service;
 
+import com.google.gson.Gson;
 import lombok.AllArgsConstructor;
-import model.Dish;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
+import model.*;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 import dish.repository.DishRepository;
 
 import java.util.List;
@@ -17,9 +16,18 @@ public class DishServiceImpl implements DishService {
 
     private DishRepository dishRepository;
 
+    private KafkaTemplate<String, Object> kafkaTemplate;
+
+
     @Override
     public void addDish(Dish dish) {
       dishRepository.save(dish);
+
+      kafkaTemplate.send(Topics.TOPIC_SEND_DISH_ADMIN, dish);
+      kafkaTemplate.send(Topics.TOPIC_SEND_DISH_DELIVERY, dish);
+      kafkaTemplate.send(Topics.TOPIC_SEND_DISH_KITCHEN, dish);
+      kafkaTemplate.send(Topics.TOPIC_SEND_DISH_ORDER, dish);
+      kafkaTemplate.send(Topics.TOPIC_SEND_DISH_PAYMENT, dish);
     }
 
     @Override
@@ -47,5 +55,22 @@ public class DishServiceImpl implements DishService {
     @Override
     public List<Dish> findAll() {
         return dishRepository.findAll();
+    }
+
+    @Override
+    public void sendAllDishes() {
+        List<Dish> dishes = findAll();
+        String json = new Gson().toJson(dishes);
+        kafkaTemplate.send(Topics.TOPIC_ALL_DISHES_ADMIN, json);
+        kafkaTemplate.send(Topics.TOPIC_ALL_DISHES_DELIVERY, json);
+        kafkaTemplate.send(Topics.TOPIC_ALL_DISHES_KITCHEN, json);
+        kafkaTemplate.send(Topics.TOPIC_ALL_DISHES_ORDER, json);
+        kafkaTemplate.send(Topics.TOPIC_ALL_DISHES_PAYMENT, json);
+    }
+
+
+    @KafkaListener(topics = Topics.TOPIC_REMOVE_DISH)
+    private void removeDish(IdDTO id) {
+        dishRepository.deleteById(id.getId());
     }
 }

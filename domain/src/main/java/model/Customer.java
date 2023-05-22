@@ -1,23 +1,34 @@
 package model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.List;
 
-@Data
+@Getter@Setter
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Table(name = "customer")
+@NoArgsConstructor
 @Entity
 public class Customer {
 
     @Id
     @EqualsAndHashCode.Include
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     private String login;
 
     private String password;
+
+    @ManyToOne
+    private Card card;
+
+    @OneToMany(mappedBy = "customer", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<Order> orders;
+
+
+    @OneToOne (mappedBy = "customer")
+    private CustomerToken token;
 }

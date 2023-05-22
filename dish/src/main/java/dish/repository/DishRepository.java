@@ -1,6 +1,6 @@
 package dish.repository;
 
-import model.Dish;
+import model.*;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;

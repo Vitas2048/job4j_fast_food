@@ -2,7 +2,7 @@ package kitchen.service;
 
 import kitchen.repository.StatusRepository;
 import lombok.AllArgsConstructor;
-import model.Status;
+import model.*;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

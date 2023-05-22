@@ -18,40 +18,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-    <profiles>
-        <profile>
-            <id>test</id>
-            <properties>
-                <liquibase.changeLogFile>liquibase-changeLog1.xml</liquibase.changeLogFile>
-                <liquibase.url>jdbc:h2:./testdb;MODE=PostgreSQL;CASE_INSENSITIVE_IDENTIFIERS=TRUE;</liquibase.url>
-                <liquibase.username></liquibase.username>
-                <liquibase.password></liquibase.password>
-            </properties>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-        </profile>
-        <profile>
-            <id>production</id>
-            <properties>
-                <liquibase.changeLogFile>liquibase-changeLog1.xml</liquibase.changeLogFile>
-                <liquibase.url>jdbc:postgresql://127.0.0.1:5432/dish</liquibase.url>
-                <liquibase.username>postgres</liquibase.username>
-                <liquibase.password>postgres</liquibase.password>
-            </properties>
-        </profile>
-        <profile>
-            <id>docker</id>
-            <properties>
-                <liquibase.changeLogFile>liquibase-changeLog1.xml</liquibase.changeLogFile>
-                <liquibase.url>jdbc:postgresql://data_local:5432/dish</liquibase.url>
-                <liquibase.username>postgres</liquibase.username>
-                <liquibase.password>postgres</liquibase.password>
-            </properties>
-        </profile>
-    </profiles>
-
-
     <dependencies>
 
         <dependency>
@@ -66,12 +32,6 @@
             <artifactId>lombok</artifactId>
             <version>1.18.26</version>
             <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>ru.job4j</groupId>
-            <artifactId>kitchen</artifactId>
-            <version>1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
@@ -96,38 +56,46 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.8.9</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ru.job4j</groupId>
+            <artifactId>domain</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
     </dependencies>
 
 
     <build>
         <plugins>
-
-            <plugin>
-                <groupId>org.liquibase</groupId>
-                <artifactId>liquibase-maven-plugin</artifactId>
-                <version>4.15.0</version>
-                <configuration>
-                    <changeLogFile>${liquibase.changeLogFile}</changeLogFile>
-                    <url>${liquibase.url}</url>
-                    <username>${liquibase.username}</username>
-                    <password>${liquibase.password}</password>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>clearCheckSums</goal>
-                            <goal>update</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </exclude>
+                    </excludes>
+                </configuration>
             </plugin>
-
         </plugins>
     </build>
 

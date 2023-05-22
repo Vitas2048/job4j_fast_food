@@ -2,7 +2,7 @@ package dish.controller;
 
 import dish.service.DishService;
 import lombok.AllArgsConstructor;
-import model.Dish;
+import model.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 
 @RestController
-@RequestMapping("/dish")
+@RequestMapping("/api/dish")
 @AllArgsConstructor
 public class DishController {
 
@@ -26,6 +26,7 @@ public class DishController {
             dishes.put(name, price);
         });
         var body = dishes.toString();
+        dishService.sendAllDishes();
         return ResponseEntity.status(HttpStatus.FOUND)
                 .contentType(MediaType.TEXT_PLAIN)
                 .contentLength(body.length())

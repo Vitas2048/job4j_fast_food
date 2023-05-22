@@ -3,13 +3,13 @@ package model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "food_admin")
 @Data
 @Entity
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -23,4 +23,7 @@ public class Admin {
     private String login;
 
     private String password;
+
+    @OneToOne(mappedBy = "admin")
+    private AdminToken token;
 }

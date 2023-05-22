@@ -1,12 +1,10 @@
 package kitchen.service;
 
-import model.Order;
+import model.*;
 
 import java.util.Optional;
 
 public interface KitchenService {
-
-    void receiveOrder(Order order);
 
     void sendOrderToOrder(Order order, String topic);
 

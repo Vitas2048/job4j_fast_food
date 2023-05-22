@@ -1,6 +1,6 @@
 package project.repository;
 
-import model.Status;
+import model.*;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;

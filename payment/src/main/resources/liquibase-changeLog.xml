@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+    <include file="db/scripts/003_DDL_CREATE_DISH_TABLES.sql" relativeToChangelogFile="true"/>
+    <include file="db/scripts/001_DDL_CREATE_BALANCE_TABLES.sql" relativeToChangelogFile="true"/>
+    <include file="db/scripts/002_DDL_CREATE_TRANSACTION_TABLES.sql" relativeToChangelogFile="true"/>
+    <include file="db/scripts/004_DDL_CREATE_TRANS_DISH_TABLES.sql" relativeToChangelogFile="true"/>
+</databaseChangeLog>

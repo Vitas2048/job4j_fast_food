@@ -1,6 +1,6 @@
 package project.repository;
 
-import model.Card;
+import model.*;
 import org.springframework.data.repository.CrudRepository;
 
 

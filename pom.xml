@@ -8,7 +8,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>2.7.9</version>
-        <relativePath/> <!-- lookup parent from dish.repository -->
+        <relativePath/>
     </parent>
 
 
@@ -27,7 +27,6 @@
         <module>notification</module>
         <module>kitchen</module>
         <module>domain</module>
-
     </modules>
 
     <properties>
@@ -41,7 +40,6 @@
     </profiles>
 
     <dependencies>
-
 
     </dependencies>
 

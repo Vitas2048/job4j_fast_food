@@ -2,30 +2,187 @@ version: "3.9"
 
 services:
   data_local:
-    image: postgres
+    build:
+      context: postgres
+      dockerfile: Dockerfile
     container_name: data_local
     environment:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_USER=postgres
-      - POSTGRES_DB=dish
       - PGDATA=/var/lib/postgresql/data
+      - POSTGRES_MULTIPLE_DATABASES="admin","delivery","dish","kitchen","notification","order","payment"
+    ports:
+      - 5433:5432
+    expose:
+      - 5432
     volumes:
-      - ./db/shortcut/data:/var/lib/postgresql/data
+      - /var/lib/volumes/job4j/db:/var/lib/postgresql/data
     restart: always
+
+  job4j_admin:
+    build:
+      context: admin
+      dockerfile: Dockerfile
+    environment:
+      - spring.datasource.url=jdbc:postgresql://data_local:5432/admin
+      - spring.datasource.username=postgres
+      - spring.datasource.password=postgres
+      - spring.datasource.driver-class-name=org.postgresql.Driver
+      - spring.kafka.consumer.bootstrap-servers=kafka:9092
+      - spring.kafka.producer.bootstrap-servers=kafka:9092
+    ports:
+      - 8084:8084
+    expose:
+      - 8084
+    container_name: job4j_admin
+    depends_on:
+      - data_local
+      - kafka
+
+  job4j_delivery:
+    build:
+      context: delivery
+      dockerfile: Dockerfile
+    environment:
+      - spring.datasource.url=jdbc:postgresql://data_local:5432/delivery
+      - spring.datasource.username=postgres
+      - spring.datasource.password=postgres
+      - spring.datasource.driver-class-name=org.postgresql.Driver
+      - spring.kafka.consumer.bootstrap-servers=kafka:9092
+      - spring.kafka.producer.bootstrap-servers=kafka:9092
+    ports:
+      - 8083:8083
+    expose:
+      - 8083
+    container_name: job4j_delivery
+    depends_on:
+      - data_local
+      - kafka
 
   job4j_dish:
     build:
-      context: .
+      context: dish
       dockerfile: Dockerfile
     environment:
       - spring.datasource.url=jdbc:postgresql://data_local:5432/dish
       - spring.datasource.username=postgres
       - spring.datasource.password=postgres
       - spring.datasource.driver-class-name=org.postgresql.Driver
+      - spring.kafka.consumer.bootstrap-servers=kafka:9092
+      - spring.kafka.producer.bootstrap-servers=kafka:9092
+    ports:
+      - 8081:8081
+    expose:
+      - 8081
+    container_name: job4j_dish
+    depends_on:
+      - data_local
+      - kafka
+
+  job4j_kitchen:
+    build:
+      context: kitchen
+      dockerfile: Dockerfile
+    environment:
+      - spring.datasource.url=jdbc:postgresql://data_local:5432/kitchen
+      - spring.datasource.username=postgres
+      - spring.datasource.password=postgres
+      - spring.datasource.driver-class-name=org.postgresql.Driver
+      - spring.kafka.consumer.bootstrap-servers=kafka:9092
+      - spring.kafka.producer.bootstrap-servers=kafka:9092
+    ports:
+      - 8082:8082
+    expose:
+      - 8082
+    container_name: job4j_kitchen
+    depends_on:
+      - data_local
+      - kafka
+
+  job4j_notification:
+    build:
+      context: notification
+      dockerfile: Dockerfile
+    environment:
+      - spring.datasource.url=jdbc:postgresql://data_local:5432/notification
+      - spring.datasource.username=postgres
+      - spring.datasource.password=postgres
+      - spring.datasource.driver-class-name=org.postgresql.Driver
+      - spring.kafka.consumer.bootstrap-servers=kafka:9092
+      - spring.kafka.producer.bootstrap-servers=kafka:9092
+    ports:
+      - 8060:8060
+    expose:
+      - 8060
+    container_name: job4j_notification
+    depends_on:
+      - data_local
+      - kafka
+
+  job4j_order:
+    build:
+      context: order
+      dockerfile: Dockerfile
+    environment:
+      - spring.datasource.url=jdbc:postgresql://data_local:5432/order
+      - spring.datasource.username=postgres
+      - spring.datasource.password=postgres
+      - spring.datasource.driver-class-name=org.postgresql.Driver
+      - spring.kafka.consumer.bootstrap-servers=kafka:9092
+      - spring.kafka.producer.bootstrap-servers=kafka:9092
     ports:
       - 8080:8080
     expose:
       - 8080
-    container_name: job4j_dish
+    container_name: job4j_order
     depends_on:
       - data_local
+      - kafka
+
+  job4j_payment:
+    build:
+      context: payment
+      dockerfile: Dockerfile
+    environment:
+      - spring.datasource.url=jdbc:postgresql://data_local:5432/payment
+      - spring.datasource.username=postgres
+      - spring.datasource.password=postgres
+      - spring.datasource.driver-class-name=org.postgresql.Driver
+      - spring.kafka.consumer.bootstrap-servers=kafka:9092
+      - spring.kafka.producer.bootstrap-servers=kafka:9092
+    ports:
+      - 8085:8085
+    expose:
+      - 8085
+    container_name: job4j_payment
+    depends_on:
+      - data_local
+      - kafka
+
+  zookeeper:
+    image: docker.io/bitnami/zookeeper:3.8
+    ports:
+      - "2181:2181"
+    volumes:
+      - "zookeeper_data:/bitnami"
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+  kafka:
+    image: docker.io/bitnami/kafka:3.4
+    ports:
+      - "9092:9092"
+    volumes:
+      - "kafka_data:/bitnami"
+    environment:
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_ENABLE_KRAFT=no
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092
+    depends_on:
+      - zookeeper
+
+volumes:
+  zookeeper_data:
+    driver: local
+  kafka_data:
+    driver: local

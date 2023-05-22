@@ -1,18 +1,15 @@
 package model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
-
-@Data
+import java.time.LocalDateTime;
+@Getter@Setter
 @AllArgsConstructor
+@RequiredArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "db_notification")
-@NoArgsConstructor
 public class Notification {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,5 +17,9 @@ public class Notification {
     private int id;
 
     private String noticeText;
+
+    private int customerId;
+
+    private LocalDateTime createTime;
 
 }

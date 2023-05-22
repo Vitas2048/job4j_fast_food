@@ -1,6 +1,6 @@
 package dish.service;
 
-import model.Dish;
+import model.*;
 
 import java.util.List;
 
@@ -17,5 +17,7 @@ public interface DishService {
     Dish findById(int id);
 
     List<Dish> findAll();
+
+    void sendAllDishes();
 
 }
